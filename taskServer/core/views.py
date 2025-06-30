@@ -1,11 +1,14 @@
 from django.shortcuts import render
 from rest_framework import generics, viewsets, permissions, filters, status
 from .models import User, Project, Task, ActivityLog
-from .serializers import UserSerializer, ProjectSerializer, TaskSerializer, ActivityLogSerializer
+from .serializers import UserSerializer, ProjectSerializer, TaskSerializer, ActivityLogSerializer, CustomTokenObtainPairSerializer
 from .permissions import IsAdmin, IsContributor
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny
 from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import IsAuthenticated
+from rest_framework_simplejwt.views import TokenObtainPairView
 
 # Create your views here.
 
@@ -14,6 +17,15 @@ class RegisterView(generics.CreateAPIView):
     serializer_class = UserSerializer
     permission_classes = [AllowAny]
 
+class CustomTokenObtainPairView(TokenObtainPairView):
+    serializer_class = CustomTokenObtainPairSerializer
+
+class UserViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+    permission_classes = [IsAdmin] 
+    filter_backends = [DjangoFilterBackend]
+    filterset_fields = ['role']
 
 class ProjectViewSet(viewsets.ModelViewSet):
     queryset = Project.objects.all()
@@ -58,10 +70,10 @@ class TaskViewSet(viewsets.ModelViewSet):
     
 
     def perform_destroy(self, instance):
-        # Soft delete
+        instance = self.get_object()
         instance.is_deleted = True
         instance.save()
-        return Response(status=status.HTTP_204_NO_CONTENT)
+        return Response({"detail": "Task soft-deleted."}, status=status.HTTP_204_NO_CONTENT)
     
     
     def update(self, request, *args, **kwargs):
@@ -93,3 +105,11 @@ class ActivityLogListView(generics.ListAPIView):
     queryset = ActivityLog.objects.select_related('task', 'previous_assignee')
     serializer_class = ActivityLogSerializer
     permission_classes = [IsAdmin]
+
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_me(request):
+    user = request.user
+    serializer = UserSerializer(user)
+    return Response(serializer.data)
