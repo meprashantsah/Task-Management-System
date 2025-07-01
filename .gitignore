@@ -1,0 +1,55 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.pyc
+
+# Virtual environment
+venv/
+env/
+
+# Django-specific
+*.sqlite3
+db.sqlite3
+*.log
+
+# Environment variables
+.env
+
+# VS Code / JetBrains / IDE files
+.vscode/
+.idea/
+
+# Migrations (optional to ignore if you only commit final ones)
+**/migrations/*.py
+!**/migrations/__init__.py
+
+# Byte-compiled files
+*.egg-info/
+*.egg
+dist/
+build/
+.eggs/
+
+# Node modules (if you use npm/yarn in frontend)
+node_modules/
+
+# Mac and Windows system files
+.DS_Store
+Thumbs.db
+
+# Coverage reports
+htmlcov/
+.coverage
+
+# pycache folders recursively
+**/__pycache__/
+
+# Python testing
+.tox/
+.pytest_cache/
+.coverage
+
+# Compiled files
+*.so
