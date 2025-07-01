@@ -4,7 +4,8 @@ A Task Management System with user authentication, nested projects, and task tra
 
 *Installation Instructions
 git clone https://github.com/meprashantsah/Task-Management-System.git
-Task-Management-System
+cd Task-Management-System
+
 
 *Backend setup(Django)
 cd taskServer
